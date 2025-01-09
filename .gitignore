@@ -171,3 +171,5 @@ cython_debug/
 .pypirc
 data/genome_scores.csv
 data/rating.csv
+data/data.csv
+data/data_train.csv
