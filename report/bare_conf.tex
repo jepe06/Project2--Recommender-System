@@ -83,52 +83,107 @@ Recommender systems are information tools that provide users with recommended it
 
 For that reason, the developed recommender systems is based on one of the most widely used movie databases, MovieLens dataset, for education and development \cite{Harper2015}. The choice of this dataset allowed for a based comparison with algorithms from the literature, and facilitate the analysis and interpretation of the results here presented. 
 
+%faz sentido acrescentar as equações referentes aos diferentes modelos? Pergunto só pq se não os vamos implementar nós e testar se calhar não faz grande sentido 
+
 \section{State of the Art}
 
-The field of recommender systems is wide and covers many different algorithms and techniques. In the present work we focus on collaborative filtering using matrix factorization, as it is the main focus of the work here developed.
+The field of recommender systems is wide and covers many different algorithms and techniques. In this paper we focus on collaborative filtering using matrix factorization, as it is the main focus of the work here developed.
+
+The Netflix prize is often cited as one of the main drivers for research in collaborative filtering recommender systems \cite{netflix_prize_2009}. One of the initial awarded proposals was that by Brandyn Webb, known by his alias "Simon Funk". Despite the nam of the algorithm (FunkSVD), Singular Value Decomposition is not used, it uses instead gradient descent to find the latent feature values used to predict the ratings matrix. The algorithm uses only the available ratings, representing a great advantage against certain SVD methods.
+\begin{equation}
+r_{ij} = u_i \cdot v_j
+\end{equation}
+\begin{align}
+u_{if}(\text{new}) &= u_{if}(\text{old}) + 2\alpha(r_{ij} - \tilde{r}_{ij})v_{jf} \\
+v_{jf}(\text{new}) &= v_{jf}(\text{old}) + 2\alpha(r_{ij} - \tilde{r}_{ij})u_{if}
+\end{align}
+There is a caveat however, given that the model requires fine tuning of numerous parameters (number of latent features, learning rate, training iterations, regularization parameter), which can lead to overfitting \cite{Funk2006}. In the work by Zhou et al., alternating least squares with weighted  $\lambda$ regularization (ALS-WR). 
+\begin{align}
+f(U, M) &= \sum_{\{i, j\} | r_{i,j} \in I} \left( r_{i,j} - u_i^T m_j \right)^2 \nonumber \\
+&\quad + \lambda \left( \sum_i n_{u_i} \| u_i \|^2 + \sum_j n_{m_j} \| m_j \|^2 \right)
+\end{align}
+The algorithm expresses the rating matrix as the product of two smaller matrices U (user matrix) and M (item matrix). Thanks to its simplicity, the algorithm tackles both scalability and sparseness of user profiles, with the added bonus of not overfitting \cite{10.1007/978-3-540-68880-8_32}. A third model by Gopalan et al. uses a probabilistic approach by assuming that the observed rating is drawn from a Poisson distribution, which is parameterized by the inner product of a user weights vector and an item weights vector. 
+\begin{equation}
+y_{ui} \sim Poisson(\theta_u^T \beta_i)
+\end{equation}
+\noindent
+Where:
+\begin{itemize}
+    \renewcommand{\labelitemi}{~} % Suppress bullets
+    \item \textit{User weights:} $\theta_u = [\theta_{u1}, \dots, \theta_{uk}]$
+    \item \textit{Item weights:} $\beta_i = [\beta_{i1}, \dots, \beta_{ik}]$
+    \item $\theta_{uk} \sim Gamma(a, b)$
+    \item $\beta_{ik} \sim Gamma(c, d)$
+\end{itemize}
+With this, the model is able to compute how likely the user is to consume new items \cite{gopalan2014scalablerecommendationpoissonfactorization}.
 
 \section{Methodology}
 
 
-\subsection{dados engenharia? tratamento?}
+\subsection{Data description}
 
-os dados contém 
+The dataset MovieLens for Education and Research (small) was used to test the different models. It contains 100 836 ratings, from 1 to 5, for 9724 movies (and its genres) and 610 users, where each user rated at least 20 movies \cite{MovieLens}. 
 
-100836 ratings, to 9724 movies by 610 users
+\subsection{Data splitting \& models implemented}
 
-contudo de modo a tornar o dataset um pouco menor e tp por nao querermos utilizadores novos, com poucas classificacoes de filmes, visto q qnd um utilizador tem poucas classificacoes ha uma metodologia diferente (vet ppts / literatura ?), foram removidos utilizadores com menos de 50 filmes avaliados e foram removidos filmes sem avaliacoes
+The dataset was split between train an test (80/20), which resulted in 80668 ratings for the training and 20168 for the testing dataset. Three models were developed, as described in the Table \ref{models_cf}.
 
-pelo q ficamos com (9633 filmes, 385 users) e 93812 ratings no total
+\begin{table}[H]
+\centering
+\caption{Models implemented to the MovieLens dataset.}
+\label{models_cf}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lc}
+\toprule
+\textbf{Models - features} & \textbf{Description} \\
+\midrule
+Model 01 - Users and Movies & Collaborative filtering, && Linear Regression (LR) \\[1em]
+Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (LRC) \\[1em]
+Model 03 - Users and Movies + Genres & Collaborative filtering, && Single Value Decomposition (SVD) \\[1em] 
+\bottomrule
+\end{tabular}%
+}
+\end{table}
 
-os dados foram separados em teste e treino, pelo que os ratings levaram split de 20\%, resultando em 75049 ratings para teste e 18763 para treino sendo o objetivo ver como a previsao dos ratings fica com os de treino
+Our models were fitted with an 8-fold cross validation to find the best hyperparameters for the considered interval, as described in the lectures. For Model 03, we used the package \textit{surprise} and the tools therein \cite{surprise}. 
 
+The error metrics used in the present work were the mean absolute error (MAE) and the root mean squared error (RMSE). The MAE considers all error equally, regardless of their size, whereas RMSE strongly penalizes larger errors.
 
+\begin{equation}
+MAE = \frac{1}{n}\sum^n_{i=1}|y_i-\hat{y}_i|
+\end{equation}
 
-\subsection{dados análise}
+\begin{equation}
+RMSE = \sqrt{\frac{1}{n}\sum^{n}_{i=1}(y_i - \hat{y}_i)^2}
+\end{equation}
+
+\subsection{Exploratory data analysis}
+
+The dataset consists of several movies across a wide range of genres. As seen in Fig. \ref{fig:genre_distribution} there is positively skewed distribution, as is common in this type of dataset.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/genre_distribution.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Distribution of movies per movie genre.}
     \label{fig:genre_distribution}
 \end{figure}
+
+Despite the variety in genres, it's important to retain that generally movies are more complex than representing a single genre. In that sense, it is useful to assess the similarity between genres (using the cosine similarity index), as illustrated in Fig. \ref{fig:genre_similarity}. This helps understand how the task of recommending a movie can start to grow more complex as we add more and more detail to the dataset. In Table \ref{tab:genre_similarity} the five most related genres are shown.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/genre_similarity.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Cosine similarity index between genres.}
     \label{fig:genre_similarity}
 \end{figure}
 
-na fig \ref{fig:genre_similarity} ve se relacoes como 
-
 \begin{table}[H]
 \centering
-\caption{CAPTIO CAPTION CAPTION}
+\caption{The five most related genres per cosine similarity index.}
 \label{tab:genre_similarity}
 \begin{tabular}{llr}
 \toprule
-\textbf{genre} & \textbf{genre} & \textbf{sim} \\
+\textbf{Genre} & \textbf{Genre} & \textbf{Similarity index} \\
 \midrule
 Animation & Children & .47 \\ 
 Action & Adventure & .40 \\
@@ -139,19 +194,158 @@ Romance & Drama & .35 \\
 \end{tabular}
 \end{table} 
 
+The dataset is relatively recent, with movies from the 2010's, going all the way back to the early 1900's, as per Fig. \ref{fig:year_distribution}. As expected, there are much less ratings for older movies, for two main reasons: older movies are less popular and there are less movies in general.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/year_distribution.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Distribution of movies per year.}
     \label{fig:year_distribution}
 \end{figure}
+
+As expected, both distributions from Fig. \ref{fig:distribution_moviesratings} and \ref{fig:distribution_userratings} are positively skewed as mentioned before. In general there are more people rating a small amount of movies, and the number of movies with higher counts of ratings tends to decrease rapidly (as there are very few, very popular movies).
+
+This type of distribution is commonly found across recommender systems, and represents well the challenges posed to these algorithms: sparsity, whereas most of the matrix is empty (98.3 \% of missing values); bias, popular movies tend to dominate the analysis; and the long tail represents the challenge to make recommendations based on the large number of movies (or users) with very few ratings (or that rated few movies).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/distribution_moviesratings.png}
+    \caption{Distribution of the number of movies and the amount of ratings. The first bin correspond to 1 movie rated.}    \label{fig:distribution_moviesratings}
+\end{figure}
+
+To finalize, it is important to mention (again) that the minimum number of ratings per user is 20, and the maximum is 2698. The minimum rating per movie is 1, and the maximum is 329 ratings. The most rated movies (and not so coincidentally) the highest rated movies were:
+\begin{itemize}
+    \item Forrest Gump (1994) - 329 ratings
+    \item Pulp Fiction (1994) - 317 ratings
+    \item The Shawshank Redemption (1994) - 307 ratings
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/distribution_userratings.png}
+    \caption{Distribution of the number of users and the amount of ratings. The first bin correspond to 20 movies rated.}    \label{fig:distribution_userratings}
+\end{figure}
+
+\subsection{MEDIDAS DE ERRO OU AVALIACAO}
+
 
 
 
 \section{Classification Models}
 
 
-\section{Logistic Regression}
+\section{Model01}
+
+o modelo ? colaborative filtering? consiste na otimizacao simultanea do x (paremetros do movies) e do theta (param dos users?) confirmar  com slides.
+
+meter formula e parametros e isso tp slides ?
+
+é um problema de regressao linear, pelo que exige a otimizacao dos hyperparametros lambda (parametro de custo) e alpha (learning rate)
+
+foi dado ao modelo varios valores de alpha entre 0.0001 e 0.002 e para lambda entre 0 e 100, e atraves do 8 fold cross validation no conjunto de treino, minimizando a medida de erro RMSE, com 500 iteracoes, foram os hyperparametros otimizados, como se pode ver na figura seguinte
+
+os melhores hyperparametros obtidos foram entao $\lambda = 6$ e $\alpha = 0.0005$, com o rmse medio do 8cv de 1.25622
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model01_hyperparametres.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model01_hyperparametres}
+\end{figure}
+
+obtidos os hyperparametros otimos, foi entao aplicado 8cv learning curve nos dados de treino para verificar a validacao do modelo nos dados de treino em termos de overffting
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model01_learning_curve.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model01_cost_function}
+\end{figure}
+
+
+dps foi entao aplicada a descida do gradiente? regressao linear? para obter a estimativa dos parametros x e theta (movies e users) do problema.
+
+a figura seguinte mostra a funcao custo ao longo das iteracoes, revelanco a convergencia da mesma
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model01_cost_function.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model01_cost_function}
+\end{figure}
+
+apos a estimativa dos ratings para todas as combinacoes de movies e users, compararam-se estas estimativas com as presentes na train e test data
+
+\begin{table}[H]
+\centering
+\caption{CAPTIO CAPTION CAPTION}
+\label{tab:model01_results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{RMSE} & \textbf{MAE} & \textbf{Support} \\
+\midrule
+Train Set & 0.58842 & 0.44604 & 80668 \\
+Test Set & 1.24037 & 0.90651 & 20168 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{model02}
+
+aqui é igual ao primeiro modelo mas ao inves de termos o x? (movies features) vamos ter os generos dos filmes, por exemplo se um filme é romance/drama é [0,0,....5,.5] tipo
+
+
+\section{Model03}
+
+\begin{table}[H]
+\centering
+\caption{SVD model hyperparameters search space.}
+\label{parametrosSVD}
+\begin{tabular}{ll}
+\toprule
+\textbf{Hyperparameter} & \textbf{Possible Values} \\
+\midrule
+$n\_factors$ & \{$5,15,30,40,50$\} \\ 
+$lr\_all$ & \{$0.005, 0.01, 0.05, 0.1, 1$\} \\ 
+$reg\_all$ & \{$0.02,0.1,1,5,10$\} \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Number of Singular Values or Components: n\_factors
+
+Learning rate: lr\_all
+
+Regularization Parameters: reg\_all
+
+Best Hyperparameters: \{'n\_factors': 50, 'lr\_all': 0.01, 'reg\_all': 0.1\}
+
+lallla learning curve
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model03_learningcurve.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model03_learningcurve}
+\end{figure}
+
+lalala results meauseres
+
+\begin{table}[H]
+\centering
+\caption{CAPTIO CAPTION CAPTION}
+\label{tab:model03_results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{RMSE} & \textbf{MAE} & \textbf{Support} \\
+\midrule
+Train Set & 0.75035 & 0.58313 & 80668 \\
+Test Set & 0.87412 & 0.66957 & 20168 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 
