@@ -16,3 +16,6 @@ https://grouplens.org/datasets/movielens/ : recommended for education and develo
 - comparar top 10 de cada utilizador e comaprar top 10 estimado vs real
 
 - calculate precision, recall, f1-score @ top k:: RESULTADOS ??
+
+
+- rever legendas, titulos, etc
