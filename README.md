@@ -6,6 +6,6 @@ https://grouplens.org/datasets/movielens/ : recommended for education and develo
 
 ## overleaf
 
-- renomiar modelos no overlaf para CF-LR,,  CB-LR,,   CF-SVD
+- renomiar modelos no overlaf para CF-LR,,  CB-LR,,   CF-SVD!!!! MALLL
 
 - rever captions e isso
