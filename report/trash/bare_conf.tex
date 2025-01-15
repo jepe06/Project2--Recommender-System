@@ -126,7 +126,7 @@ The dataset MovieLens for Education and Research (small) was used to test the di
 
 \subsection{Data splitting \& models implemented}
 
-The dataset was split between train an test (80/20), which resulted in 80668 ratings for the training and 20168 for the testing dataset. Three models were developed, as described in the Table \ref{models_cf}.
+The dataset was split between train and test (80/20), which resulted in 80668 ratings for the training and 20168 for the testing dataset. Three models were developed, as described in the Table \ref{models_cf}.
 
 \begin{table}[H]
 \centering
@@ -139,7 +139,7 @@ The dataset was split between train an test (80/20), which resulted in 80668 rat
 \midrule
 Model 01 - Users and Movies & Collaborative filtering, && Linear Regression (CF-LR) \\[1em]
 Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (CF-LRC) \\[1em]
-Model 03 - Users and Movies + Genres & Collaborative filtering, && Single Value Decomposition (CF-SVD) \\[1em] 
+Model 03 - Users and Movies & Collaborative filtering, && Single Value Decomposition (CF-SVD) CORRIGIR \\[1em] 
 \bottomrule
 \end{tabular}%
 }
@@ -247,6 +247,8 @@ The second model fits only the users parameter, given that it accounts for the m
 &+ \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^{n} \left( \theta_k^{(j)} \right)^2
 \end{align}
 
+The third and final model is a Probabilistic Matrix Factorization, which preambles the famous FunkSVD model, with the major difference that no baselines (additional information, such as genres, user information, etc) are provided.
+
 \subsection{CF-LR}
 
 Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by usin 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
@@ -286,11 +288,11 @@ Using the defined hyperparamters, the cost function was estimated, where we see 
     \label{fig:model01_cost_function}
 \end{figure}
 
-Once the model was finalized the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing (as expected) the increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set further supports the likelihood of overfitting the data.
+With the model defined, the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing (as expected) the increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set further supports the likelihood of overfitting the data.
 
 \begin{table}[H]
 \centering
-\caption{CAPTIO CAPTION CAPTION}
+\caption{Error metrics for the train and test set, along with the number of samples for each.}
 \label{tab:model01_results}
 \begin{tabular}{lccc}
 \toprule
@@ -304,51 +306,61 @@ Test Set & 1.24037 & 0.90651 & 20168 \\
 
 \subsection{CF-LRC}
 
-aqui é igual ao primeiro modelo mas ao inves de termos o x? (movies features) vamos ter os generos dos filmes, por exemplo se um filme é romance/drama é [0,0,....5,.5] tipo
+The CF-LRC is less demanding as it is only estimating the features related to the users, considering that the movie features are estimated from the genres given per movie in the dataset. Each movie is weighted in terms of how much it is represented by a given genre (e.g., Pearl Harbor being for example 33/33/33 war, drama and romance), which is represented by vector \textit{x}. The movie features don't need to be optimized, and as the name states, the model is a linear regression \textit{content based}, leaving the vector \textit{$\theta$} (user) features to be optimized. 
 
-ns q mesmos dados de treino e de teste de smp
+%aqui é igual ao primeiro modelo mas ao inves de termos o x? (movies features) vamos ter os generos dos filmes, por exemplo se um filme é romance/drama é [0,0,....5,.5] tipo
 
-neste caso temos o X q n precisa de otimizacao, pq é usado os generos dos filmes como features dos movies, content based, ent so vamos otimizar o theta (20 features dos users)
+%ns q mesmos dados de treino e de teste de smp
 
-entre alpha 0.007 e 0.0005 e lambda 10 e 0, foram otimizados os hyperparametros, como se pode ver na figura uma parte desse intervalo, para melhor visuazalicao da otimizacao, tendo sido esta com minimizacao do rmse e 8cv nos dados de treino
+%neste caso temos o X q n precisa de otimizacao, pq é usado os generos dos filmes como features dos movies, content based, ent so vamos otimizar o theta (20 features dos users)
+
+%entre alpha 0.007 e 0.0005 e lambda 10 e 0, foram otimizados os hyperparametros, como se pode ver na figura uma parte desse intervalo, para melhor visuazalicao da otimizacao, tendo sido esta com minimizacao do rmse e 8cv nos dados de treino
+
+As seen in Fig. \ref{fig:model02_hyperparemeterstunning}, $\alpha$ was optimized between 0.00005 and 0.007, whereas $\lambda$ was varied between 0 and 10. The optimized hyperparameters (as a result of CV) are pinpointed in the graph, corresponding to (0.05, 0.005) with 8 CV RMSE of 0.98617.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_hyperparemeterstunning.png}
-    \caption{CAPTIO CAPTION CAPTION}
-    \label{fig:model02_hyperparemeterstunning}
+    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fitting.}    \label{fig:model02_hyperparemeterstunning}
 \end{figure}
 
-The best hyperparameters are: (0.05, 0.005) with 8cv RMSE: 0.98617
+%The best hyperparameters are: (0.05, 0.005) with 8cv RMSE: 0.98617
 
 
-de movo a verificar a validade do modelo, temos a learning curve, a ver se n ha overfiting
+%de movo a verificar a validade do modelo, temos a learning curve, a ver se n ha overfiting
+
+Similar to CF-LR, the learning curve was estimated to ensure no overfitting occurred. In this case the trends vary in an identical fashion for the whole training set, which is a good indicator of an adequate fit. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_learning_curve.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Learning curve, RMSE progression throughout the training dataset.}
     \label{fig:model02_learning_curve}
 \end{figure}
 
-e parece bastante bem, pq ambas as retas se acompanham
+%e parece bastante bem, pq ambas as retas se acompanham
 
-para alem disso tbm e importante a verificacao da convergencia do modelo, atraves da sua funcao de custo
+%para alem disso tbm e importante a verificacao da convergencia do modelo, atraves da sua funcao de custo
+In Fig. \ref{fig:model02_cost_function} the cost function is minimized as in CF-LR, indicating proper convergence of the cost function.
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_cost_function.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Cost function evolution with the number of iterations in the training set.}
     \label{fig:model02_cost_function}
 \end{figure}
 
-converge e bem
+%converge e bem
 
-atendo as medidas de erro:
+%atendo as medidas de erro:
+
+The error metrics in Table \ref{tab:model03_results} further contribute to the model's proper fit, that do not vary significantly from the train to the test set.
+
 
 \begin{table}[H]
 \centering
-\caption{CAPTIO CAPTION CAPTION}
+\caption{Error metrics for the train and test set, along with the number of samples for each.}
 \label{tab:model03_results}
 \begin{tabular}{lccc}
 \toprule
@@ -360,13 +372,16 @@ Test Set & 0.97254 & 0.74605 & 20168 \\
 \end{tabular}
 \end{table}
 
-medidas proximas, no signs of overfitting
 
-\subsection{CF-SVD}
+\subsection{CF-FunkSVD}
+
+este modelo tem em conta apenas os filmes e user e os ratins como o modelo CF-LR
+
+foi usado a biblioteca surprise juntamente com a funcao GridSearchCV
 
 \begin{table}[H]
 \centering
-\caption{SVD model hyperparameters search space.}
+\caption{FunkSVD model hyperparameters search space.}
 \label{parametrosSVD}
 \begin{tabular}{ll}
 \toprule
@@ -475,7 +490,7 @@ PARA A OBTENCAo destes resultados .......
 \label{tab:atk_results_benchamarkpaper}
 \begin{tabular}{lccc}
 \toprule
-\textbf{Measure} & \textbf{CF-LR} & \textbf{CB-LR} & \textbf{CF-SVD} \\
+\textbf{Measure} & \textbf{CF-LR} & \textbf{CB-LR} & \textbf{CF-FunkSVD} \\
 \midrule
 Precision@100 & 0.08073 & 0.07659 & 0.08585 \\
 Recall@100 & 0.80732 & 0.76585 & 0.85854 \\
