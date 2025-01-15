@@ -137,9 +137,9 @@ The dataset was split between train an test (80/20), which resulted in 80668 rat
 \toprule
 \textbf{Models - features} & \textbf{Description} \\
 \midrule
-Model 01 - Users and Movies & Collaborative filtering, && Linear Regression (LR) \\[1em]
-Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (LRC) \\[1em]
-Model 03 - Users and Movies + Genres & Collaborative filtering, && Single Value Decomposition (SVD) \\[1em] 
+Model 01 - Users and Movies & Collaborative filtering, && Linear Regression (CF-LR) \\[1em]
+Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (CF-LRC) \\[1em]
+Model 03 - Users and Movies + Genres & Collaborative filtering, && Single Value Decomposition (CF-SVD) \\[1em] 
 \bottomrule
 \end{tabular}%
 }
@@ -227,16 +227,12 @@ To finalize, it is important to mention (again) that the minimum number of ratin
     \caption{Distribution of the number of users and the amount of ratings. The first bin correspond to 20 movies rated.}    \label{fig:distribution_userratings}
 \end{figure}
 
-\subsection{MEDIDAS DE ERRO OU AVALIACAO}
-
-
-
-
 \section{Classification Models}
 
-The three models here presented are first and foremost linear regression problems, where by fitting a model with the known data to the users and the movies, it will be possible to estimate the ratings of movies that have not been reviewed. In this sense, besides the model itself, it is necessary to fit two hyperparameters, the learning rate $\alpha$, and the cost parameter $\lambda$. 
+The three models here presented are first and foremost linear regression problems, where by fitting a model with the known data to the users and the movies, it will be possible to estimate the ratings of movies that have not been reviewed. In this sense, besides the model itself, it is necessary to fit two hyperparameters, the learning rate $\alpha$, and the cost parameter $\lambda$. For both CF-LR and CF-LRC 20 features were used for users, and for movies (40 features in total). The number of features was defined empirically, based on the number of genres in the dataset (20 genres).
 
-The first model developed aims to fit both users (\textit{x} parameter) and movies ($\theta$ parameter) simultaneously, as depicted in the equation below.
+The first model developed aims to fit both users (\textit{x} parameter) and movies ($\theta$ parameter) simultaneously, as depicted in the equation below, by optimization of the cost function with regularization. %menciono aqui a cost function, não sei se será necessário mencionar de novo mais abaixo%
+
 \begin{multline}
 \min_{x^{(1)}, \dots, x^{(n_m)}, \theta^{(1)}, \dots, \theta^{(n_u)}} 
 \frac{1}{2} \sum_{(i, j) : r(i, j) = 1} \left( (\theta^{(j)})^T x^{(i)} - y^{(i,j)} \right)^2 \\
@@ -251,7 +247,7 @@ The second model fits only the users parameter, given that it accounts for the m
 &+ \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^{n} \left( \theta_k^{(j)} \right)^2
 \end{align}
 
-\subsection{Model01 - LR}
+\subsection{CF-LR}
 
 Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by usin 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
 
@@ -264,22 +260,24 @@ The best hyperparameters for Model01 were $\lambda = 6$ and $\alpha = 0.0005$, w
     \label{fig:model01_hyperparametres}
 \end{figure}
 
-Once the optimal hyperparameters were defined, the learning curve was estimated from the 8 CV on the training dataset, to assess the validity of the model and that it is not overfit.
+Once the optimal hyperparameters were defined, the learning curve was estimated from the 8 CV on the training dataset, to assess the validity of the model and that it is not overfit. To further confirm that little to no overfitting is observed, in Fig. \ref{fig:model01_learning_curve} the progression of the training score and the CV score tends to improve across the train set size, not overlapping or changing the trend significantly. It is important to bear in mind that there is a risk of slight overfitting, considering that there are 40 features to be fit.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_learning_curve.png}
     \caption{Learning curve, RMSE progression throughout the training dataset.}
-    \label{fig:model01_cost_function}
+    \label{fig:model01_learning_curve}
 \end{figure}
 
-DIZER Q USAMOS 20 FEATURES PARA X E 20 PARA THETA PQ TEMOS 20 GENEROS DE FILMES E FOI DE FORMA EMPIRICA A ESCOLHA
+%DIZER Q USAMOS 20 FEATURES PARA X E 20 PARA THETA PQ TEMOS 20 GENEROS DE FILMES E FOI DE FORMA EMPIRICA A ESCOLHA - acrescentei na introdução do IV - Classification Models%
 
-tlvz haja um pouco d eoverffiting, visto que as retas comecam a divergir um pouco , e dps os resultados do rmse e q vao mostrar isso: DIZER Q PODEMOS TER UM POUCO DE OVERFFTING OQ SE PODE DEVER A ESTARMOS A OTIMZIAR 40 FEATURES, dizer aqui q podemos ter, dps da tabela do rmse, dizer q é possivel q tenhamos, pelo q tlvz fosse interessante otimizar o numero de features, num futuro trabalho OUUU dizer q nu futuro trabalho se pode exprimentar tbm outro tipo de regularizacao, usamos ridge, podiamos exprimentar lasso
+ %TER UM POUCO DE OVERFFTING OQ SE PODE DEVER A ESTARMOS A OTIMZIAR 40 FEATURES, dizer aqui q podemos ter, dps da tabela do rmse, dizer q é possivel q tenhamos, pelo q tlvz fosse interessante otimizar o numero de features, num futuro trabalho OUUU dizer q nu futuro trabalho se pode exprimentar tbm outro tipo de regularizacao, usamos ridge, podiamos exprimentar lasso - considerar mencionar esta parte no future work%
 
-dps foi entao aplicada a descida do gradiente? regressao linear? para obter a estimativa dos parametros x e theta (movies e users) do problema.
+Using the defined hyperparamters, the cost function was estimated, where we see it sharply decreasing as the iterations run, finally converging at the limit.
 
-a figura seguinte mostra a funcao custo ao longo das iteracoes, revelanco a convergencia da mesma
+%dps foi entao aplicada a descida do gradiente? regressao linear? para obter a estimativa dos parametros x e theta (movies e users) do problema.%
+
+%a figura seguinte mostra a funcao custo ao longo das iteracoes, revelanco a convergencia da mesma%
 
 \begin{figure}[H]
     \centering
@@ -288,7 +286,7 @@ a figura seguinte mostra a funcao custo ao longo das iteracoes, revelanco a conv
     \label{fig:model01_cost_function}
 \end{figure}
 
-apos a estimativa dos ratings para todas as combinacoes de movies e users, compararam-se estas estimativas com as presentes na train e test data
+Once the model was finalized the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing (as expected) the increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set further supports the likelihood of overfitting the data.
 
 \begin{table}[H]
 \centering
@@ -304,7 +302,7 @@ Test Set & 1.24037 & 0.90651 & 20168 \\
 \end{tabular}
 \end{table}
 
-\subsection{Model02 - LRC}
+\subsection{CF-LRC}
 
 aqui é igual ao primeiro modelo mas ao inves de termos o x? (movies features) vamos ter os generos dos filmes, por exemplo se um filme é romance/drama é [0,0,....5,.5] tipo
 
@@ -364,7 +362,7 @@ Test Set & 0.97254 & 0.74605 & 20168 \\
 
 medidas proximas, no signs of overfitting
 
-\subsection{Model03 - SVD}
+\subsection{CF-SVD}
 
 \begin{table}[H]
 \centering
@@ -429,8 +427,65 @@ Test Set & 0.87412 & 0.66957 & 20168 \\
 
 8cv aplicado ao dataset completo: 7folds para fit, 1 fold para teste (medidas do teste apresentadas), usando os modelos otimizados
 
+dhuashdiuas
+
+dhashdiaushda
+
+dhauishdiaushd
+
+ACHAS QUE VALE A PENA DEIXAR OS 4 GRAFICOS ???
+
+PARA A OBTENCAo destes resultados .......
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/results_precisionK.png}
+    \caption{caption caption caption}
+    \label{fig:results_precisionK}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/results_recallK.png}
+    \caption{caption caption caption}
+    \label{fig:results_recallK}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/results_f1K.png}
+    \caption{caption caption caption}
+    \label{fig:results_f1K}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/results_mrrK.png}
+    \caption{caption caption caption}
+    \label{fig:results_mrrK}
+\end{figure}
+
 
 \subsection{Literature Benchmark}
+
+
+\begin{table}[H]
+\centering
+\caption{CAPTIO mesaures@100 across the models for the test data only}
+\label{tab:atk_results_benchamarkpaper}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Measure} & \textbf{CF-LR} & \textbf{CB-LR} & \textbf{CF-SVD} \\
+\midrule
+Precision@100 & 0.08073 & 0.07659 & 0.08585 \\
+Recall@100 & 0.80732 & 0.76585 & 0.85854 \\
+F1@100 & 0.14679 & 0.13925 & 0.15610 \\
+MRR@100 & 0.46304 & 0.31212 & 0.38477 \\
+RMSE & 1.23691 & 0.97240 & 0.87268 \\
+MAE & 0.90417 & 0.74607 & 0.66804 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 \section{Conclusion}
