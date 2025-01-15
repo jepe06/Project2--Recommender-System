@@ -234,35 +234,48 @@ To finalize, it is important to mention (again) that the minimum number of ratin
 
 \section{Classification Models}
 
+The three models here presented are first and foremost linear regression problems, where by fitting a model with the known data to the users and the movies, it will be possible to estimate the ratings of movies that have not been reviewed. In this sense, besides the model itself, it is necessary to fit two hyperparameters, the learning rate $\alpha$, and the cost parameter $\lambda$. 
 
-\section{Model01}
+The first model developed aims to fit both users (\textit{x} parameter) and movies ($\theta$ parameter) simultaneously, as depicted in the equation below.
+\begin{multline}
+\min_{x^{(1)}, \dots, x^{(n_m)}, \theta^{(1)}, \dots, \theta^{(n_u)}} 
+\frac{1}{2} \sum_{(i, j) : r(i, j) = 1} \left( (\theta^{(j)})^T x^{(i)} - y^{(i,j)} \right)^2 \\
++ \frac{\lambda}{2} \sum_{i=1}^{n_m} \sum_{k=1}^{n} \left( x_k^{(i)} \right)^2 + \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^{n} \left( \theta_k^{(j)} \right)^2
+\end{multline}
 
-o modelo ? colaborative filtering? consiste na otimizacao simultanea do x (paremetros do movies) e do theta (param dos users?) confirmar  com slides.
 
-meter formula e parametros e isso tp slides ?
+The second model fits only the users parameter, given that it accounts for the movies parameters by using the movie genres.
+\begin{align}
+\min_{\theta^{(1)}, \dots, \theta^{(n_u)}} 
+&\frac{1}{2} \sum_{j=1}^{n_u} \sum_{i : r(i, j) = 1} \left( (\theta^{(j)})^T x^{(i)} - y^{(i,j)} \right)^2 \notag \\
+&+ \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^{n} \left( \theta_k^{(j)} \right)^2
+\end{align}
 
-é um problema de regressao linear, pelo que exige a otimizacao dos hyperparametros lambda (parametro de custo) e alpha (learning rate)
+\subsection{Model01 - LR}
 
-foi dado ao modelo varios valores de alpha entre 0.0001 e 0.002 e para lambda entre 0 e 100, e atraves do 8 fold cross validation no conjunto de treino, minimizando a medida de erro RMSE, com 500 iteracoes, foram os hyperparametros otimizados, como se pode ver na figura seguinte
+Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by usin 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
 
-os melhores hyperparametros obtidos foram entao $\lambda = 6$ e $\alpha = 0.0005$, com o rmse medio do 8cv de 1.25622
+The best hyperparameters for Model01 were $\lambda = 6$ and $\alpha = 0.0005$, with an average RMSE from 8-CV of 1.25622.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_hyperparametres.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fitting.}
     \label{fig:model01_hyperparametres}
 \end{figure}
 
-obtidos os hyperparametros otimos, foi entao aplicado 8cv learning curve nos dados de treino para verificar a validacao do modelo nos dados de treino em termos de overffting
+Once the optimal hyperparameters were defined, the learning curve was estimated from the 8 CV on the training dataset, to assess the validity of the model and that it is not overfit.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_learning_curve.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Learning curve, RMSE progression throughout the training dataset.}
     \label{fig:model01_cost_function}
 \end{figure}
 
+DIZER Q USAMOS 20 FEATURES PARA X E 20 PARA THETA PQ TEMOS 20 GENEROS DE FILMES E FOI DE FORMA EMPIRICA A ESCOLHA
+
+tlvz haja um pouco d eoverffiting, visto que as retas comecam a divergir um pouco , e dps os resultados do rmse e q vao mostrar isso: DIZER Q PODEMOS TER UM POUCO DE OVERFFTING OQ SE PODE DEVER A ESTARMOS A OTIMZIAR 40 FEATURES, dizer aqui q podemos ter, dps da tabela do rmse, dizer q é possivel q tenhamos, pelo q tlvz fosse interessante otimizar o numero de features, num futuro trabalho OUUU dizer q nu futuro trabalho se pode exprimentar tbm outro tipo de regularizacao, usamos ridge, podiamos exprimentar lasso
 
 dps foi entao aplicada a descida do gradiente? regressao linear? para obter a estimativa dos parametros x e theta (movies e users) do problema.
 
@@ -271,7 +284,7 @@ a figura seguinte mostra a funcao custo ao longo das iteracoes, revelanco a conv
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_cost_function.png}
-    \caption{CAPTIO CAPTION CAPTION}
+    \caption{Cost function evolution with the number of iterations in the training set.}
     \label{fig:model01_cost_function}
 \end{figure}
 
@@ -291,12 +304,67 @@ Test Set & 1.24037 & 0.90651 & 20168 \\
 \end{tabular}
 \end{table}
 
-\section{model02}
+\subsection{Model02 - LRC}
 
 aqui é igual ao primeiro modelo mas ao inves de termos o x? (movies features) vamos ter os generos dos filmes, por exemplo se um filme é romance/drama é [0,0,....5,.5] tipo
 
+ns q mesmos dados de treino e de teste de smp
 
-\section{Model03}
+neste caso temos o X q n precisa de otimizacao, pq é usado os generos dos filmes como features dos movies, content based, ent so vamos otimizar o theta (20 features dos users)
+
+entre alpha 0.007 e 0.0005 e lambda 10 e 0, foram otimizados os hyperparametros, como se pode ver na figura uma parte desse intervalo, para melhor visuazalicao da otimizacao, tendo sido esta com minimizacao do rmse e 8cv nos dados de treino
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model02_hyperparemeterstunning.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model02_hyperparemeterstunning}
+\end{figure}
+
+The best hyperparameters are: (0.05, 0.005) with 8cv RMSE: 0.98617
+
+
+de movo a verificar a validade do modelo, temos a learning curve, a ver se n ha overfiting
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model02_learning_curve.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model02_learning_curve}
+\end{figure}
+
+e parece bastante bem, pq ambas as retas se acompanham
+
+para alem disso tbm e importante a verificacao da convergencia do modelo, atraves da sua funcao de custo
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/model02_cost_function.png}
+    \caption{CAPTIO CAPTION CAPTION}
+    \label{fig:model02_cost_function}
+\end{figure}
+
+converge e bem
+
+atendo as medidas de erro:
+
+\begin{table}[H]
+\centering
+\caption{CAPTIO CAPTION CAPTION}
+\label{tab:model03_results}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{RMSE} & \textbf{MAE} & \textbf{Support} \\
+\midrule
+Train Set & 0.84859 & 0.65997 & 80668 \\
+Test Set & 0.97254 & 0.74605 & 20168 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+medidas proximas, no signs of overfitting
+
+\subsection{Model03 - SVD}
 
 \begin{table}[H]
 \centering
@@ -348,13 +416,18 @@ Test Set & 0.87412 & 0.66957 & 20168 \\
 \end{table}
 
 
+\section{Discussion} 
 
-
-\section{Discussion} \label{discussion_sec}
 \subsection{Performance Metrics}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{assets/results_boxplot.png}
+    \caption{caption caption caption}
+    \label{fig:results_boxplot}
+\end{figure}
 
-\subsection{Decision Boundaries}
+8cv aplicado ao dataset completo: 7folds para fit, 1 fold para teste (medidas do teste apresentadas), usando os modelos otimizados
 
 
 \subsection{Literature Benchmark}
