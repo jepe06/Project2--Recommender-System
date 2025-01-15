@@ -127,16 +127,18 @@ The dataset was split between train and test (80/20), which resulted in 80668 ra
 
 \begin{table}[H]
 \centering
-\caption{Models implemented to the MovieLens dataset.}
+\caption{Implemented models description.}
 \label{models_cf}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lc}
 \toprule
-\textbf{Models - features} & \textbf{Description} \\
+\textbf{Model - features} & \textbf{Description} \\
 \midrule
-Model 01 - Users and Movies & Collaborative filtering, && Linear Regression (CF-LR) \\[1em]
-Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (CB-LR) \\[1em]
-Model 03 - Users and Movies & Collaborative filtering, && FunkSVD (CF-FunkSVD) \\[1em] 
+Model 01 - Users and Movies & Collaborative Filtering, && Linear Regression (CF-LR) \\[1em]
+%Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (CB-LR) \\[1em] oq achas???????????????????????????
+% li que havia um hybrid, tlvz seja onde melhor se encaixa...
+Model 02 - Users and Movies + Genres & Hybrid: Content-Based + Collaborative, && Linear Regression (CB-LR) \\[1em]
+Model 03 - Users and Movies & Collaborative Filtering, && FunkSVD (CF-FunkSVD) \\[1em] 
 \bottomrule
 \end{tabular}%
 }
@@ -191,12 +193,12 @@ Romance & Drama & .35 \\
 \end{tabular}
 \end{table} 
 
-The dataset is relatively recent, with movies from the 2010's, going all the way back to the early 1900's, as per Fig. \ref{fig:year_distribution}. As expected, there are much less ratings for older movies, for two main reasons: older movies are less popular and there are less movies in general.
+The dataset is relatively recent, with movies from the 2010's, going all the way back to the early 1900's, as per Fig. \ref{fig:year_distribution}. As expected, there are much fewer ratings for older movies, for two main reasons: older movies are less popular and there are less movies in general.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/year_distribution.png}
-    \caption{Distribution of movies per year.}
+    \caption{Movies distribution per year.}
     \label{fig:year_distribution}
 \end{figure}
 
@@ -209,7 +211,8 @@ This type of distribution is commonly found across recommender systems, and repr
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/distribution_moviesratings.png}
-    \caption{Distribution of the number of movies and the amount of ratings. The first bin correspond to 1 movie rated.}    \label{fig:distribution_moviesratings}
+    \caption{Distribution of movies based on the number of ratings, starting from 1 rating in the first bin.} %tentei alterar um pouco a caption, opinião?
+    \label{fig:distribution_moviesratings}
 \end{figure}
 
 To finalize, it is important to mention (again) that the minimum number of ratings per user is 20, and the maximum is 2698. The minimum rating per movie is 1, and the maximum is 329 ratings. The most rated movies (and not so coincidentally) the highest rated movies were:
@@ -219,11 +222,11 @@ To finalize, it is important to mention (again) that the minimum number of ratin
     \item The Shawshank Redemption (1994) - 307 ratings
 \end{itemize}
 
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/distribution_userratings.png}
-    \caption{Distribution of the number of users and the amount of ratings. The first bin correspond to 20 movies rated.}    \label{fig:distribution_userratings}
+    \caption{Distribution of users based on the number of ratings, starting from 20 ratings in the first bin.}
+    \label{fig:distribution_userratings}
 \end{figure}
 
 \section{Classification Models}
@@ -253,30 +256,30 @@ The third and final model is the famous FunkSVD. As mentioned in the state of th
 
 Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by usin 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
 
-The best hyperparameters for this model were $\lambda = 6$ and $\alpha = 0.0005$, with an average RMSE from 8-CV of 1.25622.
+The best hyperparameters for this model were $\lambda = 6$ and $\alpha = 0.0005$, with an average RMSE from 8-fold CV of 1.25622.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_hyperparametres.png}
-    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fitting.}
+    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fine-tuning for the CF-LR model.}
     \label{fig:model01_hyperparametres}
 \end{figure}
 
-Once the optimal hyperparameters were defined, the learning curve was estimated from the 8 CV on the training dataset, to assess the validity of the model and that it is not overfit. To further confirm that little to no overfitting is observed, in Fig. \ref{fig:model01_learning_curve} the progression of the training score and the CV score tends to improve across the train set size, not overlapping or changing the trend significantly. It is important to bear in mind that there is a risk of slight overfitting, considering that there are 40 features to be fit.
+Once the optimal hyperparameters were defined, the learning curve was estimated from the 8-fold CV on the training dataset, to assess the validity of the model and that it is not overfit. To further confirm that little to no overfitting is observed, in Fig. \ref{fig:model01_learning_curve} the progression of the training score and the CV score tends to improve across the train set size, not overlapping or changing the trend significantly. It is important to bear in mind that there is a risk of slight overfitting, considering that there are 40 features to be fit.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_learning_curve.png}
-    \caption{Learning curve, RMSE progression throughout the training dataset.}
+    \caption{CF-LR learning curve: 8-fold CV RMSE progression throughout the training dataset.}
     \label{fig:model01_learning_curve}
 \end{figure}
 
-Using the defined hyperparamters, the cost function was estimated, where we see it sharply decreasing as the iterations run, finally converging at the limit.
+Using the defined hyperparameters, the cost function was estimated, where we see it sharply decreasing as the iterations run, finally converging at the limit.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model01_cost_function.png}
-    \caption{Cost function evolution with the number of iterations in the training set.}
+    \caption{Evolution of the CF-LR model's cost function over iterations.}
     \label{fig:model01_cost_function}
 \end{figure}
 
@@ -286,7 +289,7 @@ With the model defined, the train and test sets were compared for the errors (RM
 
 \begin{table}[H]
 \centering
-\caption{Error metrics for the train and test set, along with the number of samples for each.}
+\caption{Error metrics for the train and test set (CF-LR), along with the number of samples for each.}
 \label{tab:model01_results}
 \begin{tabular}{lccc}
 \toprule
@@ -307,7 +310,7 @@ As seen in Fig. \ref{fig:model02_hyperparemeterstunning}, $\alpha$ was optimized
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_hyperparemeterstunning.png}
-    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fitting.}
+    \caption{Learning rate ($\alpha$) and regularization parameter ($\lambda$) fine-tuning for CB-LR model.}
     \label{fig:model02_hyperparemeterstunning}
 \end{figure}
 
@@ -317,7 +320,7 @@ As in CF-LR the learning curve was estimated to ensure no overfitting occurred. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_learning_curve.png}
-    \caption{Learning curve, RMSE progression throughout the training dataset.}
+    \caption{CB-LR learning curve: 8-fold CV RMSE progression throughout the training dataset.}
     \label{fig:model02_learning_curve}
 \end{figure}
 
@@ -326,7 +329,7 @@ In Fig. \ref{fig:model02_cost_function} the cost function is minimized as in CF-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model02_cost_function.png}
-    \caption{Cost function evolution with the number of iterations in the training set.}
+    \caption{Evolution of the CB-LR model's cost function over iterations.}
     \label{fig:model02_cost_function}
 \end{figure}
 
@@ -334,7 +337,7 @@ The error metrics in Table \ref{tab:model03_results} further contribute to the m
 
 \begin{table}[H]
 \centering
-\caption{Error metrics for the train and test set, along with the number of samples for each.}
+\caption{Error metrics for the train and test set (CB-LR), along with the number of samples for each.}
 \label{tab:model03_results}
 \begin{tabular}{lccc}
 \toprule
@@ -346,14 +349,13 @@ Test Set & 0.97254 & 0.74605 & 20168 \\
 \end{tabular}
 \end{table}
 
-\newpage
 \subsection{CF-FunkSVD Model}
 
 The CF-FunkSVD model was designed with a minimal set of optimized hyperparameters to reduce the risk of overfitting and to evaluate the impact of these parameters on the model's performance. The optimization process was conducted using a \textit{GridSearchCV} with an 8-fold cross-validation. In Table \ref{parametrosSVD} the range of values for each hyperparameter is given, where \textit{n\_factors} corresponds to the number of factors, \textit{lr\_all} is the overall learning rate, and \textit{reg\_all} the regularization parameter. The remaining parameters are kept as default, indicated in \textit{surprise} Python package \cite{surprise}. The best fit values were 50, 0.01, and 0.1, respectively.
 
 \begin{table}[H]
 \centering
-\caption{FunkSVD model hyperparameters search space.}
+\caption{CF-FunkSVD model hyperparameters search space.}
 \label{parametrosSVD}
 \begin{tabular}{ll}
 \toprule
@@ -373,7 +375,7 @@ With this sort of approach, as the training set increases the model becomes more
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/model03_learningcurve.png}
-    \caption{Learning curve, RMSE progression throughout the training dataset.}
+    \caption{CF-FunkSVD learning curve: 8-fold CV RMSE progression throughout the training dataset.}
     \label{fig:model03_learningcurve}
 \end{figure}
 
@@ -382,7 +384,7 @@ As before, the error metrics evidence an adequate fit between the training and t
 \newline
 \begin{table}[H]
 \centering
-\caption{Error metrics for the train and test set, along with the number of samples for each.}
+\caption{Error metrics for the train and test set (CF-FunkSVD), along with the number of samples for each.}
 \label{tab:model03_results}
 \begin{tabular}{lccc}
 \toprule
@@ -398,12 +400,12 @@ Test Set & 0.87412 & 0.66957 & 20168 \\
 \section{Discussion} 
 \subsection{Performance Metrics} % POR ACABAR !??!?!! ESCRITA MELHOR
 
-In order to assess the three models, the several error metrics are presented in the form of boxplot (Fig. \ref{fig:results_boxplot}, obtained by applying 8 CV to the whole dataset (7 folds for fitting and 1 fold for test), while using the optimized models. The recall, F1 score, and precision are known throughout the literature and commonly used for many machine learning algorithms. Their definitions can be found in the authors' previous work \cite{jpveris}.
+In order to assess the three models, the several error metrics are presented in the form of boxplot (Fig. \ref{fig:results_boxplot}, obtained by applying 8-fold CV to the whole dataset (7 folds for fitting and 1 fold for test), while using the optimized models. The recall, F1 score, and precision are known throughout the literature and commonly used for many machine learning algorithms. Their definitions can be found in the authors' previous work \cite{jpveris}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/results_boxplot.png}
-    \caption{Boxplot of RMSE and MAE error metrics determined by 8 CV across whole dataset}
+    \caption{Boxplot of RMSE and MAE error metrics determined by 8-fold CV across whole dataset.}
     \label{fig:results_boxplot}
 \end{figure}
 
@@ -422,7 +424,7 @@ In Fig. \ref{fig:results_precisionK} to \ref{fig:results_mrrK}, the evolution of
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/results_precisionK.png}
-    \caption{Precision@k up to k = 100 for the three models.}
+    \caption{Precision@$k$ for the test set, with $k \in [10,100]$ for the three models.}
     \label{fig:results_precisionK}
 \end{figure}
 
@@ -437,21 +439,21 @@ In this case, it is notable how CB-LR performs considerably worse than the other
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/results_recallK.png}
-    \caption{Recall@k up to k = 100 for the three models.}
+    \caption{Recall@$k$ for the test set, with $k \in [10,100]$ for the three models.}
     \label{fig:results_recallK}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/results_f1K.png}
-    \caption{F1@k up to k = 100 for the three models.}
+    \caption{F1@$k$ for the test set, with $k \in [10,100]$ for the three models.}
     \label{fig:results_f1K}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/results_mrrK.png}
-    \caption{MRR@k up to k = 100 for the three models.}
+    \caption{MRR@$k$ for the test set, with $k \in [10,100]$ for the three models.}
     \label{fig:results_mrrK}
 \end{figure}
 
@@ -461,7 +463,7 @@ The models in question are simpler in application compared to CF-FunkSVD, howeve
 
 \begin{table}[H]
 \centering
-\caption{CAPTIO mesaures@100 across the models for the test data only}
+\caption{Models performance results for the test set.}
 \label{tab:atk_results_benchamarkpaper}
 \begin{tabular}{lccc}
 \toprule
