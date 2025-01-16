@@ -210,7 +210,7 @@ To finalize, it is important to mention (again) that the minimum number of ratin
     \item The Shawshank Redemption (1994) - 307 ratings
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{assets/distribution_userratings.png}
     \caption{Distribution of users based on the number of ratings, starting from 20 ratings in the first bin.}
@@ -271,7 +271,7 @@ Using the defined hyperparameters, the cost function was estimated, where we see
     \label{fig:model01_cost_function}
 \end{figure}
 
-With the model defined, the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing an increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set supports the likelihood of overfitting the data.
+With the model defined, the train and test sets were compared for the errors (RMSE and MAE), as depicted in Table \ref{tab:model01_results}, showing an increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set supports the likelihood of overfitting the data.
 
 \begin{table}[H]
 \centering
@@ -356,7 +356,7 @@ $reg\_all$ & \{$0.02,0.1,1,5,10$\} \\
 
 The learning curve (Fig. \ref{fig:model03_learningcurve}) shows a different behavior considering what was observed in the other two models, where both training and testing are converging, with the former evidencing increasing RMSE, while the latter presenting a decreasing trend.
 
-With this sort of approach, as the training set increases the model becomes more generalistic, while compromising it's accuracy, resulting in an increased error. The fact that the testing set shows decreasing RMSE is a sign that the model is able to be more generic.
+With this sort of approach, as the training set increases the model becomes more generalist, while compromising its accuracy, resulting in an increased error. The fact that the testing set shows decreasing RMSE is a sign that the model is able to be more generic.
 
 \begin{figure}[H]
     \centering
@@ -384,7 +384,7 @@ Test Set & 0.87412 & 0.66957 & 20168 \\
 
 
 \section{Discussion} 
-\subsection{Performance Metrics} % REVER ?
+\subsection{Performance Metrics}
 
 In order to assess the three models, RMSE and MAE are presented in the form of boxplot (Fig. \ref{fig:results_boxplot}, obtained by applying 8-fold CV to the whole dataset (7 folds for fitting and 1 fold for test), while using the optimized models. Despite the narrow range of errors, showing a high precision and repeatability for each model, CF-FunkSVD clearly outperforms both models for both error metrics.
 
@@ -406,7 +406,7 @@ In Fig. \ref{fig:results_precisionK} to \ref{fig:results_mrrK}, Top-N metrics ar
 
 The value of these metrics depends on both the length of the suggestion lists, which in this analysis were computed for $k \in [10,100]$, and the reference list used for comparison ($I_u$), which was fixed to the Top-10 movies per user.
 
-One thing to consider right from the beginning, the larger the list of ranked items the harder it is for any of the algorithms to accurately identify it. In most of the metrics, CF-FunkSVD performs better than the remaining, but only slightly better for the top 100 items.
+One thing to consider right from the beginning, is that the larger the list of ranked items the harder it is for any of the algorithms to accurately identify it. In most of the metrics, CF-FunkSVD performs better than the remaining, but only slightly better for the Top-100 items.
 
 
 \begin{figure}[H]
@@ -418,7 +418,7 @@ One thing to consider right from the beginning, the larger the list of ranked it
 
 Considering how recall is calculated (in relation to the relevance list per user), it is considerably better for CF-FunkSVD across the \textit{k} range, while F1@k is consistently better than the other two models. The CB-LR model performs well, considering its simplicity, suffering mostly due to the large error evidenced. 
 
-For MRR, it is notable how CB-LR performs considerably worse than the other models (for any \textit{k}), considering that the features for the movies are estimated from their genres, indicating that this might be a good starting point, but needs reifnement. Interestingly, the Top-100 CF-LR surfaces as the best performing model, although the performance over the whole range is comparable to that of CF-FunkSVD.
+For MRR, it is notable how CB-LR performs considerably worse than the other models (for any \textit{k}), considering that the features for the movies are estimated from their genres, indicating that this might be a good starting point, but needs refinement. Interestingly, the Top-100 ($k=100$) CF-LR surfaces as the best performing model, even though the performance over the whole range is comparable to that of CF-FunkSVD.
 
 \begin{figure}[H]
     \centering
@@ -443,7 +443,7 @@ For MRR, it is notable how CB-LR performs considerably worse than the other mode
 
 \subsection{Literature Benchmark}
 
-The models in question are simpler in application compared to CF-FunkSVD, however, it is worthwhile to reflect on their performance comparing with the literature. First and foremost, the differences at this level are not so significant, as the CF-FunkSVD depends largely on fine tuning of the multitude of hyperparameters available. However, it still outperforms both types of linear regression.
+The models in question are simpler in application compared to CF-FunkSVD, however, it is worthwhile to reflect on their performance comparing with the literature. First and foremost, the differences at this level are not so significant, as the CF-FunkSVD depends largely on fine tuning of the multitude of hyperparameters available. Nonetheless, it still outperforms both types of linear regression.
 
 \begin{table}[H]
 \centering
@@ -467,19 +467,12 @@ In the study conducted by Paullier et al. \cite{9379914}, seven different models
 
 While Table \ref{tab:atk_results_benchamarkpaper} closely resembles the results presented in Paullier’s work, it is important to note that the datasets used are different. Paullier et al. utilized the smaller MovieLens 100k dataset, whereas the current work is based on a larger dataset, allowing for a more robust application of the FunkSVD algorithm. This distinction highlights an improvement in performance metrics for the FunkSVD model developed in this paper, driven by the larger dataset’s ability to better capture and fit the algorithm's underlying structure.
 
-%When considering the work of Paullier et al. \cite{9379914}, where seven different models were tested under the same conditions, to highlight the comparison framework and approach to this type of problem, the models developed and presented in this paper fall well in line with the performance achieved in the literature.
-%The Table \ref{tab:atk_results_benchamarkpaper} allows for an almost direct comparation to those results, even thought, the considered work uses a different dataset. QUERIA ADICIONAR ALGO ASSIM NESTE CONTEXTO, OQ ACHAS? PARA FALAR DA TABELA ESTAR MT IDENTICA A DELES TP
-%The values are not worth detailing here, as the datasets are not the same, Paullier used the smaller MovieLens 100k dataset, and comparing the FunkSVD models, the one presented in this work shows better metrics, largely due to the dimension of the dataset to better fit the algorithm.
-% PODE SE APAGAR ISTO ?
-% GOSTAS DO TEXTO ACIMA?
-
 \section{Conclusion}
 
-The purpose of this project was to learn, assess and employ different recommendation systems. The literature review allowed to understand how different models emerged throughout the years, and one of the biggest motivations for the expansion of the field, the Netflix prize. The dataset used is a benchmark across the field, decently sized, which allowed for proper fitting of the models and comparison with the literature.
+The purpose of this project was to learn, assess, and employ different recommendation systems. The literature review allowed to understand how different models based on collaborative filtering emerged throughout the years, and one of the biggest motivations for the rapid expansion of the field, the Netflix prize. The dataset used is a benchmark in this type of studies, decently sized, which allowed for proper fitting of the models and comparison with the literature.
 
 The developed models offer opportunities for further enhancement. Both collaborative filtering (CF-LR) and content-based (CB-LR) models could benefit from a more systematic approach to determining the optimal number of features, rather than relying on empirical estimates. Additionally, the third model presents numerous hyperparameters that warrant fine-tuning, which could serve as a dedicated research endeavor. There are several promising directions for future exploration, including incorporating the FunkSVD model into an ensemble algorithm.
-% ALTEREI O TEXTO, OQ ACHAS? SE OK, APAGAR O TEU
-%The models developed still leave room for improvement: the content-based model can be further refined by exploring the number of features to be used, rather than estimating it empirically. The third model has several hyperparameters that can be fine-tuned, which in itself is a research exercise. There are many avenues to be explored, and one could be to explore the FunkSVD model as part of an ensemble algorithm. TEXTO DO PATRÃO o7
+
 
 \section*{Work Load}
 
