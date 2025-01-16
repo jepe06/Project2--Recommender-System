@@ -1,37 +1,25 @@
 
 \documentclass[conference]{IEEEtran}
 
-%\usepackage{ifpdf}
-\usepackage{float}  % For handling float environments like [H]
-\usepackage{url}    % For handling URLs
+\usepackage{float} 
+\usepackage{url}  
 \usepackage{multirow}
-\usepackage{subcaption} % Required for subfigures
+\usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{cite}
 \pagestyle{plain}
 \usepackage{amsmath}
 \usepackage{float}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows, positioning}%\usepackage{url}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
 \usepackage{placeins}
 
 
 \ifCLASSINFOpdf
   \usepackage[pdftex]{graphicx}
-  % declare the path(s) where your graphic files are
-  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-%\else
-  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-  % \DeclareGraphicsExtensions{.eps}
 \fi
-% graphicx was written by David Carlisle and Sebastian Rahtz.
 
-
-% correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
-
 
 \begin{document}
 
@@ -54,13 +42,13 @@ joaopcardoso@ua.pt}}
 \thispagestyle{plain}
 
 \begin{abstract}
-Many areas of life can be improved by suggestions from our surroundings. Recommender systems have been used reliably since their early inception the 90's, and the field exploded upon the introduction of the Netflix prize, which aimed at developing the best and most efficient recommender system for their movie platform. In this work three recommender systems based on collaborative filtering are developed and presented, based on one of the MovieLens datasets. The models are compared considering their error metrics, and the capacity to rank items accurately. The models are compared with the literature, focusing on the framework used for comparison. % acrescentar aqui que vai ao encontro dos resultados da literatura ou achas q não?
+Recommender systems have been used reliably since their early inception the 90's, and the field exploded upon the introduction of the Netflix prize, which aimed at developing the best and most efficient recommender system for their movie platform. In this work three recommender systems based on collaborative filtering are developed and presented, based on one of the MovieLens datasets. The models are compared considering their error metrics, and the capacity to rank items accurately. The models are compared with the literature, focusing on the framework used for comparison. 
 \end{abstract}
 
 \begin{quote}
 \small
 \noindent
-\textbf{Keywords:} MovieLens, GroupLens, Recommender System, Collaborative Filtering, Linear Regression, FunkSVD % acrescentei duas keywords, oq achas?
+\textbf{Keywords:} MovieLens, GroupLens, Recommender System, Collaborative Filtering, Linear Regression, FunkSVD
 \end{quote}
 
 \IEEEpeerreviewmaketitle
@@ -72,7 +60,7 @@ Since the early 90's that the production rate of multimedia content has increase
 
 % The use of similar datasets can help facilitate the comparison of RS, but it isn't the only way. Maybe add this further down the document, it is not so relevant in the introduction.
 
-Recommender systems are information tools that provide users with recommended items (ideally) based on their list of preferences \cite{Konstan2012,KATARYA2017105}. These can be divided in different types, depending on the algorithm and approach to the data. Three categories can be considered: non-personalized, content-based, and collaborative filtering algorithms. Regardless of the algorithm of choice, these face crucial challenges: cold start problem (where it is difficult to tailor recommendations to a user without known preferences, or recommend an item with no reviews); data sparsity (given that most users review few items in the universe of possible items, leaving most of the user/item matrix empty); and scalability (as data grows exponentially, processing becomes evermore expensive and troublesome). These systems have been widely used in many different areas (online shopping, music, books, movie recommendation), and significant investment has gone into developing evermore personalized algorithms. A notable case for this was the Netflix prize competition in 2006, a moment where the research in the field skyrocketed. As a result, it was needed to develop better frameworks for comparison, considering not only the metrics, but data preprocessing, preparation, and routine, in order to ensure reproducibility across models and authors \cite{10.1145/2645710.2645746}.
+Recommender systems are information tools that provide users with recommended items (ideally) based on their list of preferences \cite{Konstan2012,KATARYA2017105}. These can be divided in different types, depending on the algorithm and approach to the data. Three categories can be considered: non-personalized, content-based, and collaborative filtering algorithms. Regardless of the algorithm of choice, these face crucial challenges: cold start problem (where it is difficult to tailor recommendations to a user without known preferences, or recommend an item with no reviews); data sparsity (given that most users review few items in the universe of possible items, leaving most of the user/item matrix empty); and scalability (as data grows exponentially, processing becomes evermore expensive and troublesome). These systems have been widely used in many different areas (online shopping, music, books, movie recommendation), and significant investment has gone into developing evermore personalized algorithms. A notable case for this was the Netflix prize competition in 2009, a moment where the research in the field skyrocketed. As a result, many algorithms fitted and tested on different conditions and datasets have been developed. With this came the need to develop better frameworks for comparison, considering not only the metrics, but data preprocessing, preparation, and routine, in order to ensure reproducibility across models and authors \cite{10.1145/2645710.2645746}.
 
 For that reason, the developed recommender systems is based on one of the most widely used movie databases, MovieLens dataset, for education and development \cite{Harper2015}. The choice of this dataset allowed for a based comparison with algorithms from the literature, and facilitate the analysis and interpretation of the results here presented. 
 
@@ -92,13 +80,17 @@ u_{if}(\text{new}) &= u_{if}(\text{old}) + 2\alpha(r_{ij} - \tilde{r}_{ij})v_{jf
 v_{jf}(\text{new}) &= v_{jf}(\text{old}) + 2\alpha(r_{ij} - \tilde{r}_{ij})u_{if}
 \end{align}
 
-There is a caveat however, given that the model requires fine tuning of numerous parameters (number of latent features, learning rate, training iterations, regularization parameter), which can lead to overfitting \cite{Funk2006}. In the work by Zhou et al., alternating least squares with weighted  $\lambda$ regularization (ALS-WR). 
+There is a caveat however, given that the model requires fine tuning of numerous parameters (number of latent features, learning rate, training iterations, regularization parameter), which can lead to overfitting \cite{Funk2006}. 
+
+In the work by Zhou et al., alternating least squares with weighted  $\lambda$ regularization (ALS-WR). 
 \begin{align}
 f(U, M) &= \sum_{\{i, j\} | r_{i,j} \in I} \left( r_{i,j} - u_i^T m_j \right)^2 \nonumber \\
 &\quad + \lambda \left( \sum_i n_{u_i} \| u_i \|^2 + \sum_j n_{m_j} \| m_j \|^2 \right)
 \end{align}
 
-The algorithm expresses the rating matrix as the product of two smaller matrices U (user matrix) and M (item matrix). Thanks to its simplicity, the algorithm tackles both scalability and sparseness of user profiles, with the added bonus of not overfitting \cite{10.1007/978-3-540-68880-8_32}. A third model by Gopalan et al. uses a probabilistic approach by assuming that the observed rating is drawn from a Poisson distribution, which is parameterized by the inner product of a user weights vector and an item weights vector.
+The algorithm expresses the rating matrix as the product of two smaller matrices U (user matrix) and M (item matrix). Thanks to its simplicity, the algorithm tackles both scalability and sparseness of user profiles, with the added bonus of not overfitting \cite{10.1007/978-3-540-68880-8_32}. 
+
+A third model by Gopalan et al. uses a probabilistic approach by assuming that the observed rating is drawn from a Poisson distribution, which is parameterized by the inner product of a user weights vector and an item weights vector.
 
 \begin{equation}
 y_{ui} \sim Poisson(\theta_u^T \beta_i)
@@ -106,14 +98,14 @@ y_{ui} \sim Poisson(\theta_u^T \beta_i)
 \noindent
 Where:
 \begin{itemize}
-    \renewcommand{\labelitemi}{~} % Suppress bullets
+    \renewcommand{\labelitemi}{~}
     \item \textit{User weights:} $\theta_u = [\theta_{u1}, \dots, \theta_{uk}]$
     \item \textit{Item weights:} $\beta_i = [\beta_{i1}, \dots, \beta_{ik}]$
     \item $\theta_{uk} \sim Gamma(a, b)$
     \item $\beta_{ik} \sim Gamma(c, d)$
 \end{itemize}
 
-With this, the model is able to compute the probability for each unconsumed item that the user might consume \cite{gopalan2014scalablerecommendationpoissonfactorization}.
+With this, the model is able to compute the probability for each unconsumed item that the user might enjoy \cite{gopalan2014scalablerecommendationpoissonfactorization}.
 
 \section{Methodology}
 
@@ -129,22 +121,20 @@ The dataset was split between train and test (80/20), which resulted in 80668 ra
 \centering
 \caption{Implemented models description.}
 \label{models_cf}
-\resizebox{\columnwidth}{!}{%
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lc}
 \toprule
 \textbf{Model - features} & \textbf{Description} \\
 \midrule
 Model 01 - Users and Movies & Collaborative Filtering, && Linear Regression (CF-LR) \\[1em]
-%Model 02 - Users and Movies + Genres & Collaborative filtering, && Linear Regression content based (CB-LR) \\[1em] oq achas???????????????????????????
-% li que havia um hybrid, tlvz seja onde melhor se encaixa...
 Model 02 - Users and Movies + Genres & Hybrid: Content-Based + Collaborative, && Linear Regression (CB-LR) \\[1em]
 Model 03 - Users and Movies & Collaborative Filtering, && FunkSVD (CF-FunkSVD) \\[1em] 
 \bottomrule
-\end{tabular}%
+\end{tabular}
 }
 \end{table}
 
-The models were fitted with an 8-fold cross validation to find the best hyperparameters for the considered interval. For Model 03, the package \textit{surprise} and the tools therein \cite{surprise} were used. 
+The models were fitted with an 8-fold cross validation to find the best hyperparameters for the considered interval. For CF-FunkSVD, the package \textit{surprise} and the tools therein \cite{surprise} were used. 
 
 The primary error metrics employed in this study were the mean absolute error (MAE) and the root mean squared error (RMSE). The MAE considers all error equally, regardless of their size, whereas RMSE strongly penalizes larger errors.
 
@@ -193,7 +183,7 @@ Romance & Drama & .35 \\
 \end{tabular}
 \end{table} 
 
-The dataset is relatively recent, with movies from the 2010's, going all the way back to the early 1900's, as per Fig. \ref{fig:year_distribution}. As expected, there are much fewer ratings for older movies, for two main reasons: older movies are less popular and there are less movies in general.
+The dataset is relatively recent, with movies from the 2010's, going all the way back to the early 1900's, as per Fig. \ref{fig:year_distribution}. As expected, there are much fewer ratings for older movies, for two main reasons: older movies are less popular, and there are less movies in general, as movie production picked up substantially throughout the twentieth century.
 
 \begin{figure}[H]
     \centering
@@ -202,16 +192,14 @@ The dataset is relatively recent, with movies from the 2010's, going all the way
     \label{fig:year_distribution}
 \end{figure}
 
-As expected, both distributions from Fig. \ref{fig:distribution_moviesratings} and \ref{fig:distribution_userratings} are positively skewed as mentioned before. In general there are more people rating a small amount of movies, and the number of movies with higher counts of ratings tends to decrease rapidly (as there are very few, very popular movies).
-
-% "as mentioned before" - não vi quando -H
+As expected, both distributions from Fig. \ref{fig:distribution_moviesratings} and \ref{fig:distribution_userratings} are positively skewed, since in general there are more people rating a small amount of movies, and the number of movies with higher counts of ratings tends to decrease rapidly (as there are very few, very popular movies).
 
 This type of distribution is commonly found across recommender systems, and represents well the challenges posed to these algorithms: sparsity, whereas most of the matrix is empty (98.3 \% of missing values); bias, popular movies tend to dominate the analysis; and the long tail represents the challenge to make recommendations based on the large number of movies (or users) with very few ratings (or that rated few movies).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\linewidth]{assets/distribution_moviesratings.png}
-    \caption{Distribution of movies based on the number of ratings, starting from 1 rating in the first bin.} %tentei alterar um pouco a caption, opinião?
+    \caption{Distribution of movies based on the number of ratings, starting from 1 rating in the first bin.} 
     \label{fig:distribution_moviesratings}
 \end{figure}
 
@@ -243,7 +231,7 @@ The first model developed aims to fit both movies (\textit{x} parameter) and use
 
 
 
-The second model fits only the users parameter, given that it accounts for the movies parameters by using the movie genres.
+The second model fits only the users parameter (20 features in total), given that it accounts for the movies parameters by using the movie genres.
 \begin{align}
 \min_{\theta^{(1)}, \dots, \theta^{(n_u)}} 
 &\frac{1}{2} \sum_{j=1}^{n_u} \sum_{i : r(i, j) = 1} \left( (\theta^{(j)})^T x^{(i)} - y^{(i,j)} \right)^2 \notag \\
@@ -254,7 +242,7 @@ The third and final model is the famous FunkSVD. As mentioned in the state of th
 
 \subsection{CF-LR Model}
 
-Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by usin 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
+Different ranges of $\alpha$ (between 0.0001 and 0.002) and $\lambda$ (between 0 and 100) were given to the model to be fit by using 8 cross-validation in the training dataset. This allowed to progressively lower RMSE, throughout 500 iterations.
 
 The best hyperparameters for this model were $\lambda = 6$ and $\alpha = 0.0005$, with an average RMSE from 8-fold CV of 1.25622.
 
@@ -265,7 +253,7 @@ The best hyperparameters for this model were $\lambda = 6$ and $\alpha = 0.0005$
     \label{fig:model01_hyperparametres}
 \end{figure}
 
-Once the optimal hyperparameters were defined, the learning curve was estimated from the 8-fold CV on the training dataset, to assess the validity of the model and that it is not overfit. To further confirm that little to no overfitting is observed, in Fig. \ref{fig:model01_learning_curve} the progression of the training score and the CV score tends to improve across the train set size, not overlapping or changing the trend significantly. It is important to bear in mind that there is a risk of slight overfitting, considering that there are 40 features to be fit.
+Once the optimal hyperparameters were defined, the learning curve was estimated from the 8-fold CV on the training dataset, to assess the validity of the model and that it is not overfit. In Fig. \ref{fig:model01_learning_curve} the progression of the training score and the CV score tends to improve across the train set size, not overlapping or changing the trend significantly. It is important to bear in mind that there is a risk of slight overfitting, considering that there are 40 features to be fit.
 
 \begin{figure}[H]
     \centering
@@ -283,9 +271,7 @@ Using the defined hyperparameters, the cost function was estimated, where we see
     \label{fig:model01_cost_function}
 \end{figure}
 
-With the model defined, the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing (as expected) the increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set further supports the likelihood of overfitting the data.
-
-% eventualmente encaixar algures que poderia ser interassante fazer uma otimizacao do numero de features
+With the model defined, the train and test sets were compared for the errors (RMSE and MAE), as despicted in Table \ref{tab:model01_results}, showing an increase of errors in the test set in regards to the training set. The fact that errors increased significantly from the training to the testing set supports the likelihood of overfitting the data.
 
 \begin{table}[H]
 \centering
@@ -368,9 +354,9 @@ $reg\_all$ & \{$0.02,0.1,1,5,10$\} \\
 \end{tabular}
 \end{table}
 
-The learning curve (Fig. \ref{fig:model03_learningcurve}) shows a different behavior considering what was observed in the other two models, where both training and testing are converging, with the former evidencing increasing RMSE, while the latter is decreasing.
+The learning curve (Fig. \ref{fig:model03_learningcurve}) shows a different behavior considering what was observed in the other two models, where both training and testing are converging, with the former evidencing increasing RMSE, while the latter presenting a decreasing trend.
 
-With this sort of approach, as the training set increases the model becomes more generalistic, while compromising it's accuracy, resulting in increased error. The fact that the testing set shows decreasing RMSE is a sign that the model is able to be more generic.
+With this sort of approach, as the training set increases the model becomes more generalistic, while compromising it's accuracy, resulting in an increased error. The fact that the testing set shows decreasing RMSE is a sign that the model is able to be more generic.
 
 \begin{figure}[H]
     \centering
@@ -379,7 +365,7 @@ With this sort of approach, as the training set increases the model becomes more
     \label{fig:model03_learningcurve}
 \end{figure}
 
-As before, the error metrics evidence an adequate fit between the training and testing set, considering that there is not a significant increase between the training and the testing sets.
+As before, the error metrics evidence an adequate fit between the training and testing set, considering that there is not a significant increase of the error metrics between the training and the testing sets.
 \newline
 \newline
 \begin{table}[H]
@@ -398,9 +384,9 @@ Test Set & 0.87412 & 0.66957 & 20168 \\
 
 
 \section{Discussion} 
-\subsection{Performance Metrics} % POR ACABAR !??!?!! ESCRITA MELHOR
+\subsection{Performance Metrics} % REVER ?
 
-In order to assess the three models, the several error metrics are presented in the form of boxplot (Fig. \ref{fig:results_boxplot}, obtained by applying 8-fold CV to the whole dataset (7 folds for fitting and 1 fold for test), while using the optimized models. The recall, F1 score, and precision are known throughout the literature and commonly used for many machine learning algorithms. Their definitions can be found in the authors' previous work \cite{jpveris}.
+In order to assess the three models, RMSE and MAE are presented in the form of boxplot (Fig. \ref{fig:results_boxplot}, obtained by applying 8-fold CV to the whole dataset (7 folds for fitting and 1 fold for test), while using the optimized models. Despite the narrow range of errors, showing a high precision and repeatability for each model, CF-FunkSVD clearly outperforms both models for both error metrics.
 
 \begin{figure}[H]
     \centering
@@ -409,16 +395,18 @@ In order to assess the three models, the several error metrics are presented in 
     \label{fig:results_boxplot}
 \end{figure}
 
-Despite the narrow range of errors, showing a high precision and repeatability for each model, CF-FunkSVD clearly outperforms both models for both error metrics.
+In Fig. \ref{fig:results_precisionK} to \ref{fig:results_mrrK}, Top-N metrics are used, presenting the performance of each model in the test set. These metrics intend to express the relevance of the items retrieved or the order in which these items are presented in a recommendation list. The metrics used were precision (proportion of retrieved items that are relevant), recall (proportion of relevant items that are retrieved), F1-score (weighted harmonic mean between precision and recall) and mean reciprocal rank (evaluates the position in which the first relevant item appears) \cite{9379914, ekstrand2020lenskit}.
 
-In Fig. \ref{fig:results_precisionK} to \ref{fig:results_mrrK}, the evolution of each of the metrics is calculated and displayed for each model, where \textit{k} represents the "Top $k$" movies. One thing to consider right from the beginning, the larger the list of ranked items the harder it is for any of the algorithms to accurately identify it. In most of the metrics, CF-FunkSVD performs better than the remaining, but only slightly better for the top 100 items.
-% deviamos dizer aqui quais sao as metricas talvez
-% eles nao se portam pior com o maior K, são é mais penalizados tipo ig
-% as medidas implicavam ter uma medida de relevancia, ent foi selecionado os top 10 filmes reais como medida de relevancia tp
-% e oq aumenta é a top k filmes estimados para o utilizador tipo
-% REESCREVER ISTO TALVEZ
-% TENTAR EXPLICAR MELHOR, SINTO Q A PROF VAI FICAR CONFUSA, TLVZ POSSAMOS COPIAR DO PAPER DOS OUTROS
-% ordem das imagens e do texto confusa idk, tnh de ver melhor
+\begin{align}
+&\text{Precision@}k = \frac{|L \cap I_u|}{|L|} \notag \\
+&\text{Recall@}k = \frac{|L \cap I_u|}{|I_u|} \notag \\
+&\text{F1@}k = \frac{2 \times \text{Precision@}k \times \text{Recall@}k}{\text{Precision@}k + \text{Recall@}k} \notag \\
+&\text{MRR} = \frac{1}{U} \sum_{u=1}^{U} \frac{1}{\text{rank}_u}
+\end{align}
+
+The value of these metrics depends on both the length of the suggestion lists, which in this analysis were computed for $k \in [10,100]$, and the reference list used for comparison ($I_u$), which was fixed to the Top-10 movies per user.
+
+One thing to consider right from the beginning, the larger the list of ranked items the harder it is for any of the algorithms to accurately identify it. In most of the metrics, CF-FunkSVD performs better than the remaining, but only slightly better for the top 100 items.
 
 
 \begin{figure}[H]
@@ -428,13 +416,9 @@ In Fig. \ref{fig:results_precisionK} to \ref{fig:results_mrrK}, the evolution of
     \label{fig:results_precisionK}
 \end{figure}
 
-Recall is considerably better for CF-FunkSVD across the \textit{k} range, while F1@k is consistently better than the other two models. The CB-LR model performs well, considering its simplicity, suffering mostly due to the large error evidenced. The MRR metric (mean reciprocal rank) estimates how well a system ranks items for a population of users.
+Considering how recall is calculated (in relation to the relevance list per user), it is considerably better for CF-FunkSVD across the \textit{k} range, while F1@k is consistently better than the other two models. The CB-LR model performs well, considering its simplicity, suffering mostly due to the large error evidenced. 
 
-\begin{equation}
-\text{MRR} = \frac{1}{N} \sum_{i=1}^{N} \frac{1}{\text{rank}_i}
-\end{equation}
-
-In this case, it is notable how CB-LR performs considerably worse than the other models (for any \textit{k}), and how for the top 100 CF-LR surfaces as the best performing model, although the performance over the whole range is comparable to that of CF-FunkSVD.
+For MRR, it is notable how CB-LR performs considerably worse than the other models (for any \textit{k}), considering that the features for the movies are estimated from their genres, indicating that this might be a good starting point, but needs reifnement. Interestingly, the Top-100 CF-LR surfaces as the best performing model, although the performance over the whole range is comparable to that of CF-FunkSVD.
 
 \begin{figure}[H]
     \centering
@@ -479,19 +463,22 @@ MAE & 0.90417 & 0.74607 & 0.66804 \\
 \end{tabular}
 \end{table}
 
-THE TABLE ALLOWS FOR AN ALMOST DIRECT COMPARATIONS TO THE WORK OF.... so apra fazer referencia a tabela tlvz
-% aqui por acabar , quero a tua opinião se achas q faz sentido, apesar do dataset ser fdiferente como dizes, mas tp ligar a tabela ao texto de baixo tlvz idk
+In the study conducted by Paullier et al. \cite{9379914}, seven different models were tested under identical conditions, offering a comprehensive comparison framework and approach to addressing this type of problem. The models developed and presented in this paper align well with the performance benchmarks reported in the literature.
 
-When considering the work of Paullier et al. \cite{9379914}, where seven different models were tested under the same conditions, to highlight the comparison framework and approach to this type of problem, the models developed and presented in this paper fall well in line with the performance achieved in the literature. The values are not worth detailing here, as the datasets are not the same, Paullier used the smaller MovieLens 100k dataset, and comparing the FunkSVD models, the one presented in this work shows better metrics, largely due to the dimension of the dataset to better fit the algorithm.
+While Table \ref{tab:atk_results_benchamarkpaper} closely resembles the results presented in Paullier’s work, it is important to note that the datasets used are different. Paullier et al. utilized the smaller MovieLens 100k dataset, whereas the current work is based on a larger dataset, allowing for a more robust application of the FunkSVD algorithm. This distinction highlights an improvement in performance metrics for the FunkSVD model developed in this paper, driven by the larger dataset’s ability to better capture and fit the algorithm's underlying structure.
+
+%When considering the work of Paullier et al. \cite{9379914}, where seven different models were tested under the same conditions, to highlight the comparison framework and approach to this type of problem, the models developed and presented in this paper fall well in line with the performance achieved in the literature.
+%The Table \ref{tab:atk_results_benchamarkpaper} allows for an almost direct comparation to those results, even thought, the considered work uses a different dataset. QUERIA ADICIONAR ALGO ASSIM NESTE CONTEXTO, OQ ACHAS? PARA FALAR DA TABELA ESTAR MT IDENTICA A DELES TP
+%The values are not worth detailing here, as the datasets are not the same, Paullier used the smaller MovieLens 100k dataset, and comparing the FunkSVD models, the one presented in this work shows better metrics, largely due to the dimension of the dataset to better fit the algorithm.
+% PODE SE APAGAR ISTO ?
+% GOSTAS DO TEXTO ACIMA?
 
 \section{Conclusion}
 
 The purpose of this project was to learn, assess and employ different recommendation systems. The literature review allowed to understand how different models emerged throughout the years, and one of the biggest motivations for the expansion of the field, the Netflix prize. The dataset used is a benchmark across the field, decently sized, which allowed for proper fitting of the models and comparison with the literature.
 
 The developed models offer opportunities for further enhancement. Both collaborative filtering (CF-LR) and content-based (CB-LR) models could benefit from a more systematic approach to determining the optimal number of features, rather than relying on empirical estimates. Additionally, the third model presents numerous hyperparameters that warrant fine-tuning, which could serve as a dedicated research endeavor. There are several promising directions for future exploration, including incorporating the FunkSVD model into an ensemble algorithm.
-% texto do eu, génio
-% oq achas? so queria mencionar o primeiro modelo, por causa do overffiting acaba por ser mais importante diria
-
+% ALTEREI O TEXTO, OQ ACHAS? SE OK, APAGAR O TEU
 %The models developed still leave room for improvement: the content-based model can be further refined by exploring the number of features to be used, rather than estimating it empirically. The third model has several hyperparameters that can be fine-tuned, which in itself is a research exercise. There are many avenues to be explored, and one could be to explore the FunkSVD model as part of an ensemble algorithm. TEXTO DO PATRÃO o7
 
 \section*{Work Load}
